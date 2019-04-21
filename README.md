@@ -37,41 +37,64 @@ https://esdoc.bbossgroups.com/#/bboss-build
 ## 下载源码工程-基于gradle
 https://github.com/bbossgroups/db-elasticsearch-xxjob
 
-从上面的地址下载源码工程，然后导入idea或者eclipse，根据自己的需求，修改导入程序逻辑
+从上面的地址下载源码工程，然后导入idea或者eclipse，定义同步作业配置逻辑，参考实现类：
 
-org.frameworkset.elasticsearch.imp.Application
+org.frameworkset.elasticsearch.imp.jobhandler.XXJobImportTask
 
-如果需要测试和调试导入功能，需要在db2es-booter\src\test\java目录下面编写DbdemoTest测试类，然后运行调试类即可：
-
-src/test/java/org/frameworkset/elasticsearch/imp/DbdemoTest.java
-
-```java
-public class DbdemoTest {
-	public static void main(String args[]){
-
-		long t = System.currentTimeMillis();
-		Dbdemo dbdemo = new Dbdemo();
-		String repsonse = ElasticSearchHelper.getRestClientUtil().getIndice("dbdemo");
-		boolean dropIndice = true;//CommonLauncher.getBooleanAttribute("dropIndice",false);//同时指定了默认值
-		dbdemo.scheduleImportData(  dropIndice);//定时增量导入
-//		dbdemo.scheduleFullImportData(dropIndice);//定时全量导入
-
-//		dbdemo.scheduleFullAutoUUIDImportData(dropIndice);//定时全量导入，自动生成UUID
-//		dbdemo.scheduleDatePatternImportData(dropIndice);//定时增量导入，按日期分表yyyy.MM.dd
-	}
-
-}
-```
+任务处理类必须继承抽象类org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHandler
 
 修改es和数据库配置-db2es-booter\src\test\resources\application.properties
 
+将定义的任务添加到application.properties中，并修改xxjob相关配置：
+
+```properties
+# xxjob分布式作业任务配置
+
+### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+xxl.job.admin.addresses=http://127.0.0.1:8080/xxl-job-admin
+
+### xxl-job executor address
+xxl.job.executor.appname=db-elasticsearch-xxjob
+xxl.job.executor.ip=192.168.137.1
+xxl.job.executor.port=9995
+
+### xxl-job, access token
+xxl.job.accessToken=
+
+### xxl-job log path
+xxl.job.executor.logpath=d:/xxl-job/
+### xxl-job log retention days
+xxl.job.executor.logretentiondays=-1
+##
+# 作业任务配置
+# xxl.job.task为前置配置多个数据同步任务，后缀XXJobImportTask和OtherTask将xxjob执行任务的名称
+# 作业程序都需要继承抽象类org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHandler
+# public void init(){
+#     externalScheduler = new ExternalScheduler();
+#     externalScheduler.dataStream(()->{
+#         DB2ESImportBuilder importBuilder = DB2ESImportBuilder.newInstance();
+#              编写导入作业任务配置逻辑，参考文档：https://esdoc.bbossgroups.com/#/db-es-tool
+#         return    importBuilder;
+#       }
+# }
+#
+
+xxl.job.task.XXJobImportTask = org.frameworkset.elasticsearch.imp.jobhandler.XXJobImportTask
+## xxl.job.task.otherTask = org.frameworkset.elasticsearch.imp.jobhandler.OtherTask
+
+#配置运行xxl-job作业主程序
+mainclass=org.frameworkset.elasticsearch.client.schedule.xxjob.XXJobApplication
+```
+
+
+
 工程已经内置mysql jdbc驱动，如果有依赖的第三方jdbc包（比如oracle驱动），可以将第三方jdbc依赖包放入db2es-booter\lib目录下
 
-写好DbdemoTest后就可以进行功能调试了。
+接下来测试和调试导入功能，运行db2es-booter\src\test\java目录下面的ApplicationTest测试类即可：
 
-## 注意：
+src\test\java\org\frameworkset\elasticsearch\imp\ApplicationTest.java
 
-调试的时候，千万不要直接运行Dbdemo的main方法，否则会报**找不到poolman.xml（bboss持久层数据源默认配置文件）之类莫名其妙的问题**。
+ 
 
 测试调试通过后，就可以构建发布可运行的版本了：进入命令行模式，在源码工程根目录db2es-booter下运行以下gradle指令打包发布版本
 
@@ -95,62 +118,7 @@ windows: restart.bat
 
 -Xmx1g
 
-## 在工程中添加多个表同步作业
-默认的作业任务是Dbdemo，同步表td_sm_log的数据到索引dbdemo/dbdemo中
-
-现在我们在工程中添加另外一张表td_cms_document的同步到索引cms_document/cms_document的作业步骤：
-
-1.首先，新建一个带main方法的类org.frameworkset.elasticsearch.imp.CMSDocumentImport,实现同步的逻辑
-
-如果需要测试调试，就在test目录下面编写 src\test\java\org\frameworkset\elasticsearch\imp\CMSDocumentImportTest.java测试类,然后debug即可
-
-2.然后，在runfiles目录下新建CMSDocumentImport作业主程序和作业进程配置文件：runfiles/config-cmsdocmenttable.properties，内容如下：
-
-mainclass=org.frameworkset.elasticsearch.imp.CMSDocumentImport
-
-pidfile=CMSDocumentImport.pid  
-
-
-3.最后在runfiles目录下新建作业启动sh文件（这里只新建linux/unix指令，windows的类似）：runfiles/restart-cmsdocumenttable.sh
-
-内容与默认的作业任务是Dbdemo内容一样，只是在java命令后面多加了一个参数，用来指定作业配置文件：--conf=config-cmsdocmenttable.properties
-
-nohup java \$RT_JAVA_OPTS -jar ${project}-${bboss_version}.jar restart --conf=config-cmsdocmenttable.properties --shutdownLevel=9 > ${project}.log &
-
-其他stop shell指令也类似建立即可
-
-# 管理提取数据的sql语句
-
-db2es工具管理提取数据的sql语句有两种方法：代码中直接编写sql语句，配置文件中采用sql语句  
-## 1.代码中写sql
-
-		`//指定导入数据的sql语句，必填项，可以设置自己的提取逻辑，
-		// 设置增量变量log_id，增量变量名称#[log_id]可以多次出现在sql语句的不同位置中，例如：
-		// select * from td_sm_log where log_id > #[log_id] and parent_id = #[log_id]
-		// log_id和数据库对应的字段一致,就不需要设置setNumberLastValueColumn和setNumberLastValueColumn信息，
-		// 但是需要设置setLastValueType告诉工具增量字段的类型
-	
-		importBuilder.setSql("select * from td_sm_log where log_id > #[log_id]");`
-## 2.在配置文件中管理sql
-设置sql语句配置文件路径和对应在配置文件中sql name
-`importBuilder.setSqlFilepath("sql.xml")
-​			 .setSqlName("demoexportFull");	`	
-
-配置文件sql.xml，编译到classes根目录即可：
-
-<?xml version="1.0" encoding='UTF-8'?>
-<properties>
-​    <description>
-​        <![CDATA[
-​	配置数据导入的sql
- ]]>
-​    </description>
-​    <property name="demoexport"><![CDATA[select * from td_sm_log where log_id > #[log_id]]]></property>
-​    <property name="demoexportFull"><![CDATA[select * from td_sm_log ]]></property>
-
-</properties>
-
-在sql配置文件中可以配置多条sql语句
+ 
 
 # 作业参数配置
 

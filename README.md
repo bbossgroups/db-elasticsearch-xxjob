@@ -72,6 +72,7 @@ xxl.job.executor.logretentiondays=-1
 # 作业任务配置
 # xxl.job.task为前置配置多个数据同步任务，后缀XXJobImportTask和OtherTask将xxjob执行任务的名称
 # 作业程序都需要继承抽象类org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHandler
+# 实现抽象方法init即可：
 # public void init(){
 #     externalScheduler = new ExternalScheduler();
 #     externalScheduler.dataStream(()->{
@@ -95,7 +96,7 @@ mainclass=org.frameworkset.elasticsearch.client.schedule.xxjob.XXJobApplication
 
 6. 测试和调试导入功能
 
-   运行db2es-booter\src\test\java目录下面的ApplicationTest测试类即可：
+   运行db-elasticsearch-xxjob\src\test\java目录下面的ApplicationTest测试类即可：
 
 ​       src\test\java\org\frameworkset\elasticsearch\imp\ApplicationTest.java 
 

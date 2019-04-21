@@ -15,11 +15,14 @@ package org.frameworkset.elasticsearch.imp.jobhandler;
  * limitations under the License.
  */
 
+import com.xxl.job.core.util.ShardingUtil;
 import org.frameworkset.elasticsearch.ElasticSearchHelper;
 import org.frameworkset.elasticsearch.client.DB2ESImportBuilder;
 import org.frameworkset.elasticsearch.client.schedule.ExternalScheduler;
 import org.frameworkset.elasticsearch.client.schedule.ImportIncreamentConfig;
 import org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Description: 使用quartz等外部环境定时运行导入数据，需要设置：</p>
@@ -31,9 +34,18 @@ import org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHa
  * @version 1.0
  */
 public class XXJobImportTask extends AbstractDB2ESXXJobHandler {
+	private static Logger logger = LoggerFactory.getLogger(XXJobImportTask.class);
 	public void init(){
+		// 可参考Sample示例执行器中的示例任务"ShardingJobHandler"了解试用
+
 		externalScheduler = new ExternalScheduler();
-		externalScheduler.dataStream(()->{
+		externalScheduler.dataStream((Object params)->{
+			ShardingUtil.ShardingVO shardingVO = ShardingUtil.getShardingVo();
+			if(shardingVO != null) {
+				logger.info("index:>>>>>>>>>>>>>>>>>>>" + shardingVO.getIndex());
+				logger.info("total:>>>>>>>>>>>>>>>>>>>" + shardingVO.getTotal());
+			}
+			logger.info("params:>>>>>>>>>>>>>>>>>>>" + params);
 			DB2ESImportBuilder importBuilder = DB2ESImportBuilder.newInstance();
 			//增量定时任务不要删表，但是可以通过删表来做初始化操作
 //		if(dropIndice) {
@@ -52,7 +64,7 @@ public class XXJobImportTask extends AbstractDB2ESXXJobHandler {
 			// log_id和数据库对应的字段一致,就不需要设置setNumberLastValueColumn和setNumberLastValueColumn信息，
 			// 但是需要设置setLastValueType告诉工具增量字段的类型
 
-			importBuilder.setSql("select * from td_sm_log");
+			importBuilder.setSql("select * from td_sm_log where log_id > #[log_id]");
 			importBuilder.addIgnoreFieldMapping("remark1");
 //		importBuilder.setSql("select * from td_sm_log ");
 			/**
@@ -115,7 +127,7 @@ public class XXJobImportTask extends AbstractDB2ESXXJobHandler {
 //		importBuilder.setNumberLastValueColumn("log_id");//手动指定日期增量查询字段，默认采用上面设置的sql语句中的增量变量名称作为增量查询字段的名称，指定以后就用指定的字段
 			importBuilder.setFromFirst(true);//任务重启时，重新开始采集数据，true 重新开始，false不重新开始，适合于每次全量导入数据的情况，如果是全量导入，可以先删除原来的索引数据
 			importBuilder.setLastValueStorePath("logtable_import");//记录上次采集的增量字段值的文件路径，作为下次增量（或者重启后）采集数据的起点，不同的任务这个路径要不一样
-//		importBuilder.setLastValueStoreTableName("logs");//记录上次采集的增量字段值的表，可以不指定，采用默认表名increament_tab
+			importBuilder.setLastValueStoreTableName("logs");//记录上次采集的增量字段值的表，可以不指定，采用默认表名increament_tab
 			importBuilder.setLastValueType(ImportIncreamentConfig.NUMBER_TYPE);//如果没有指定增量查询字段名称，则需要指定字段类型：ImportIncreamentConfig.NUMBER_TYPE 数字类型
 			// 或者ImportIncreamentConfig.TIMESTAMP_TYPE 日期类型
 			//增量配置结束

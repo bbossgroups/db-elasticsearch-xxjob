@@ -48,7 +48,7 @@ org.frameworkset.elasticsearch.imp.jobhandler.XXJobImportTask
 
 3. 修改es和数据库配置-db-elasticsearch-xxjob\src\test\resources\application.properties
 
-4. 将定义的任务添加到application.properties中，并修改xxjob相关配置：
+4. 将定义的任务添加到application.properties中，并修改其中xxjob参数配置：
 
 ```properties
 # xxjob分布式作业任务配置

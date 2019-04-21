@@ -96,7 +96,7 @@ src\test\java\org\frameworkset\elasticsearch\imp\ApplicationTest.java
 
  
 
-测试调试通过后，就可以构建发布可运行的版本了：进入命令行模式，在源码工程根目录db2es-booter下运行以下gradle指令打包发布版本
+测试调试通过后，就可以构建发布可运行的版本了：进入命令行模式，在源码工程根目录db-elasticsearch-xxjob下运行以下gradle指令打包发布版本
 
 gradle clean releaseVersion
 
@@ -110,6 +110,8 @@ chmod +x restart.sh
 ./restart.sh
 
 windows: restart.bat
+
+作业启动后，可以在xx-job-admin进行任务的配置，并查看运行日志。
 
 ## 作业jvm配置
 修改jvm.options，设置内存大小和其他jvm参数

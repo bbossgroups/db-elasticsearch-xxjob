@@ -9,43 +9,46 @@ Elasticsearch version requirements: 1.x,2.X,5.X,6.X,+
 
 Spring booter 1.x,2.x,+
 # bboss elasticsearch 数据导入工具xx job定时任务调度demo
-使用本demo所带的应用程序运行容器环境，可以快速编写，打包发布可运行的数据导入xx job作业工具
+使用本demo所带的应用程序运行容器环境，可以快速编写、打包发布可运行在分布式定时任务引擎xx job的数据同步任务。
 
 支持的数据库：
-mysql,maridb，postgress,oracle ,sqlserver,db2等
+mysql,maridb，postgress,oracle ,sqlserver,db2，hive等
 
 支持的Elasticsearch版本：
-1.x,2.x,5.x,6.x,+
+1.x,2.x,5.x,6.x,7.x,+
 
 支持海量PB级数据同步导入功能
 
 [使用参考文档](https://esdoc.bbossgroups.com/#/db-es-tool)
 
 
-# 构建部署
+# 开发作业
 ## 准备工作
-需要通过gradle构建发布版本，因此通过以下链接下面gradle：
+通过gradle构建发布作业，gradle安装配置文档：
 
-https://gradle.org/next-steps/?version=4.10.2&format=all
 
-下载gradle后解压，将gradle bin目录添加到path环境变量，将gradle安装目录设置为GRADLE_HOME环境变量
 
 gradle安装配置参考文档：
 
 https://esdoc.bbossgroups.com/#/bboss-build
 
-## 下载源码工程-基于gradle
+## 实现作业
+
+1. 下载源码工程-基于gradle
+
 https://github.com/bbossgroups/db-elasticsearch-xxjob
 
-从上面的地址下载源码工程，然后导入idea或者eclipse，定义同步作业配置逻辑，参考实现类：
+从github下载源码工程，然后导入idea或者eclipse
+
+2. 定义同步作业配置逻辑，参考实现类：
 
 org.frameworkset.elasticsearch.imp.jobhandler.XXJobImportTask
 
 任务处理类必须继承抽象类org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHandler
 
-修改es和数据库配置-db2es-booter\src\test\resources\application.properties
+3. 修改es和数据库配置-db-elasticsearch-xxjob\src\test\resources\application.properties
 
-将定义的任务添加到application.properties中，并修改xxjob相关配置：
+4. 将定义的任务添加到application.properties中，并修改xxjob相关配置：
 
 ```properties
 # xxjob分布式作业任务配置
@@ -88,20 +91,22 @@ mainclass=org.frameworkset.elasticsearch.client.schedule.xxjob.XXJobApplication
 
 
 
-工程已经内置mysql jdbc驱动，如果有依赖的第三方jdbc包（比如oracle驱动），可以将第三方jdbc依赖包放入db2es-booter\lib目录下
+5. 工程已经内置mysql jdbc驱动，如果有依赖的第三方jdbc包（比如oracle驱动），可以将第三方jdbc依赖包放入db-elasticsearch-xxjob\lib目录下
 
-接下来测试和调试导入功能，运行db2es-booter\src\test\java目录下面的ApplicationTest测试类即可：
+6. 测试和调试导入功能
 
-src\test\java\org\frameworkset\elasticsearch\imp\ApplicationTest.java
+   运行db2es-booter\src\test\java目录下面的ApplicationTest测试类即可：
 
- 
+​       src\test\java\org\frameworkset\elasticsearch\imp\ApplicationTest.java 
 
-测试调试通过后，就可以构建发布可运行的版本了：进入命令行模式，在源码工程根目录db-elasticsearch-xxjob下运行以下gradle指令打包发布版本
+7. 测试调试通过后，构建发布可运行的版本
 
-gradle clean releaseVersion
+   进入命令行模式，切换到源码工程根目录db-elasticsearch-xxjob下，运行gradle指令打包发布版本：
+
+​       gradle clean releaseVersion
 
 ## 运行作业
-gradle构建成功后，在build/distributions目录下会生成可以运行的zip包，解压运行导入程序
+版本发布后，在build/distributions目录下会生成可以运行的zip包，解压运行导入程序
 
 linux：
 

@@ -126,10 +126,11 @@ public class XXJobImportTask extends AbstractDB2ESXXJobHandler {
 //		//设置任务执行拦截器结束，可以添加多个
 			//增量配置开始
 //		importBuilder.setNumberLastValueColumn("log_id");//手动指定数字增量查询字段，默认采用上面设置的sql语句中的增量变量名称作为增量查询字段的名称，指定以后就用指定的字段
-//		importBuilder.setNumberLastValueColumn("log_id");//手动指定日期增量查询字段，默认采用上面设置的sql语句中的增量变量名称作为增量查询字段的名称，指定以后就用指定的字段
 			importBuilder.setFromFirst(true);//任务重启时，重新开始采集数据，true 重新开始，false不重新开始，适合于每次全量导入数据的情况，如果是全量导入，可以先删除原来的索引数据
 			importBuilder.setLastValueStorePath("logtable_import");//记录上次采集的增量字段值的文件路径，作为下次增量（或者重启后）采集数据的起点，不同的任务这个路径要不一样
-			importBuilder.setLastValueStoreTableName("logs"+index);//记录上次采集的增量字段值的表，可以不指定，采用默认表名increament_tab，如果xxjob是shard分片模式运行，每个分片需要独立的增量记录桩体表
+			importBuilder.setLastValueStoreTableName("logs"+index);//记录上次采集的增量字段值的表，可以不指定，采用默认表名increament_tab，增量状态表会自动创建。如果xxl-job是shard分片模式运行，
+																   // 需要独立的表来记录每个分片增量同步状态，
+																   // 并且采用xxl-job等分布式任务调度引擎时，同步状态表必须存放于db.config=test指定的数据源，不能采用本地sqlite数据库
 			importBuilder.setLastValueType(ImportIncreamentConfig.NUMBER_TYPE);//如果没有指定增量查询字段名称，则需要指定字段类型：ImportIncreamentConfig.NUMBER_TYPE 数字类型
 			// 或者ImportIncreamentConfig.TIMESTAMP_TYPE 日期类型
 			//增量配置结束
@@ -193,14 +194,14 @@ public class XXJobImportTask extends AbstractDB2ESXXJobHandler {
 			importBuilder.setDiscardBulkResponse(true);//设置是否需要批量处理的响应报文，不需要设置为false，true为需要，默认false
 			/**
 			 importBuilder.setEsIdGenerator(new EsIdGenerator() {
-			 //如果指定EsIdGenerator，则根据下面的方法生成文档id，
-			 // 否则根据setEsIdField方法设置的字段值作为文档id，
-			 // 如果默认没有配置EsIdField和如果指定EsIdGenerator，则由es自动生成文档id
+				 //如果指定EsIdGenerator，则根据下面的方法生成文档id，
+				 // 否则根据setEsIdField方法设置的字段值作为文档id，
+				 // 如果默认没有配置EsIdField和如果指定EsIdGenerator，则由es自动生成文档id
 
-			 @Override
-			 public Object genId(Context context) throws Exception {
-			 return SimpleStringUtil.getUUID();//返回null，则由es自动生成文档id
-			 }
+				 @Override
+				 public Object genId(Context context) throws Exception {
+				 return SimpleStringUtil.getUUID();//返回null，则由es自动生成文档id
+				 }
 			 });
 			 */
 			/**

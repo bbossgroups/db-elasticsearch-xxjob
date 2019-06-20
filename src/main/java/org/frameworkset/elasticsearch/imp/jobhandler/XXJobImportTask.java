@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>Description: 使用quartz等外部环境定时运行导入数据，需要设置：</p>
+ * <p>Description: 使用xxl-job,quartz等外部定时任务调度引擎导入数据，需要设置：</p>
  * importBuilder.setExternalTimer(true);
  * <p></p>
  * <p>Copyright (c) 2018</p>

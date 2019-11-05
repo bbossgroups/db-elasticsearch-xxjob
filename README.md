@@ -102,9 +102,9 @@ mainclass=org.frameworkset.elasticsearch.client.schedule.xxjob.XXJobApplication
 
 7. 测试调试通过后，构建发布可运行的版本
 
-   进入命令行模式，切换到源码工程根目录db-elasticsearch-xxjob下，运行gradle指令打包发布版本：
+   进入命令行模式，切换到源码工程根目录db-elasticsearch-xxjob下，运行以下指令打包发布版本：
 
-​       gradle clean releaseVersion
+​       release.bat
 
 ## 运行作业
 版本发布后，在build/distributions目录下会生成可以运行的zip包，解压运行导入程序

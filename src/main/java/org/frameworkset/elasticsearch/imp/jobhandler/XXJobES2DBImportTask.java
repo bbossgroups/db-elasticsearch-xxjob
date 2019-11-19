@@ -67,7 +67,7 @@ public class XXJobES2DBImportTask extends AbstractDB2ESXXJobHandler {
 			// select * from td_sm_log where log_id > #[log_id] and parent_id = #[log_id]
 			// log_id和数据库对应的字段一致,就不需要设置setNumberLastValueColumn和setNumberLastValueColumn信息，
 			// 但是需要设置setLastValueType告诉工具增量字段的类型
-
+			importBuilder.setSqlName("insertSQLnew"); //指定将es文档数据同步到数据库的sql语句名称，配置在dsl2ndSqlFile.xml中
 			/**
 			 * es相关配置
 			 */
@@ -77,7 +77,6 @@ public class XXJobES2DBImportTask extends AbstractDB2ESXXJobHandler {
 					.setScrollLiveTime("10m")
 					.setSliceQuery(true)
 					.setSliceSize(5)
-					.setSqlName("insertSQLnew")
 					.setQueryUrl("dbdemo/_search")
 
 //				//添加dsl中需要用到的参数及参数值

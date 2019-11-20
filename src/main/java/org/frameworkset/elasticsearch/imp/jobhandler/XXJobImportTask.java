@@ -17,10 +17,10 @@ package org.frameworkset.elasticsearch.imp.jobhandler;
 
 import com.xxl.job.core.util.ShardingUtil;
 import org.frameworkset.elasticsearch.ElasticSearchHelper;
-import org.frameworkset.elasticsearch.client.db2es.DB2ESImportBuilder;
-import org.frameworkset.elasticsearch.client.schedule.ExternalScheduler;
-import org.frameworkset.elasticsearch.client.schedule.ImportIncreamentConfig;
-import org.frameworkset.elasticsearch.client.schedule.xxjob.AbstractDB2ESXXJobHandler;
+import org.frameworkset.tran.db.input.es.DB2ESImportBuilder;
+import org.frameworkset.tran.schedule.ExternalScheduler;
+import org.frameworkset.tran.schedule.ImportIncreamentConfig;
+import org.frameworkset.tran.schedule.xxjob.AbstractDB2ESXXJobHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

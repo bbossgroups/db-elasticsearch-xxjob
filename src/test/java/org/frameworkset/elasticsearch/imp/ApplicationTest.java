@@ -1,6 +1,6 @@
 package org.frameworkset.elasticsearch.imp;
 
-import org.frameworkset.elasticsearch.client.schedule.xxjob.XXJobApplication;
+import org.frameworkset.tran.schedule.xxjob.XXJobApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

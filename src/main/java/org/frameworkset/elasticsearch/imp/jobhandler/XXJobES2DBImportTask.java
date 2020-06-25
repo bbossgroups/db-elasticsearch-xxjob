@@ -60,7 +60,9 @@ public class XXJobES2DBImportTask extends AbstractDB2ESXXJobHandler {
 			logger.info("params:>>>>>>>>>>>>>>>>>>>" + params);
 			ES2DBExportBuilder importBuilder = new ES2DBExportBuilder();
 			importBuilder.setBatchSize(2).setFetchSize(10);
-
+			importBuilder.addFieldMapping("operModule","OPER_MODULE");
+			importBuilder.addFieldMapping("logContent","LOG_CONTENT");
+			importBuilder.addFieldMapping("logOperuser","LOG_OPERUSER");
 
 			//指定导入数据的sql语句，必填项，可以设置自己的提取逻辑，
 			// 设置增量变量log_id，增量变量名称#[log_id]可以多次出现在sql语句的不同位置中，例如：
@@ -80,6 +82,7 @@ public class XXJobES2DBImportTask extends AbstractDB2ESXXJobHandler {
 					.setQueryUrl("dbdemo/_search")
 
 //				//添加dsl中需要用到的参数及参数值
+					.addParam("fullImport",true) //设置全量导入，控制dsl中的检索条件
 					.addParam("var1","v1")
 					.addParam("var2","v2")
 					.addParam("var3","v3");

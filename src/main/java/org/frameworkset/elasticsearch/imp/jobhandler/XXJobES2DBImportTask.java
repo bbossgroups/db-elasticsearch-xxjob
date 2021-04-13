@@ -22,11 +22,12 @@ import org.frameworkset.spi.geoip.IpInfo;
 import org.frameworkset.tran.DataRefactor;
 import org.frameworkset.tran.ExportResultHandler;
 import org.frameworkset.tran.context.Context;
+import org.frameworkset.tran.db.DBConfigBuilder;
 import org.frameworkset.tran.es.input.db.ES2DBExportBuilder;
 import org.frameworkset.tran.metrics.TaskMetrics;
 import org.frameworkset.tran.schedule.ExternalScheduler;
 import org.frameworkset.tran.schedule.ImportIncreamentConfig;
-import org.frameworkset.tran.schedule.xxjob.AbstractDB2ESXXJobHandler;
+import org.frameworkset.tran.schedule.xxjob.AbstractXXLJobHandler;
 import org.frameworkset.tran.task.TaskCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ import java.util.Date;
  * @author biaoping.yin
  * @version 1.0
  */
-public class XXJobES2DBImportTask extends AbstractDB2ESXXJobHandler {
+public class XXJobES2DBImportTask extends AbstractXXLJobHandler {
 	private static Logger logger = LoggerFactory.getLogger(XXJobES2DBImportTask.class);
 	public void init(){
 		// 可参考Sample示例执行器中的示例任务"ShardingJobHandler"了解试用
@@ -69,7 +70,31 @@ public class XXJobES2DBImportTask extends AbstractDB2ESXXJobHandler {
 			// select * from td_sm_log where log_id > #[log_id] and parent_id = #[log_id]
 			// log_id和数据库对应的字段一致,就不需要设置setLastValueColumn信息，
 			// 但是需要设置setLastValueType告诉工具增量字段的类型
-			importBuilder.setSqlName("insertSQLnew"); //指定将es文档数据同步到数据库的sql语句名称，配置在dsl2ndSqlFile.xml中
+			 //指定将es文档数据同步到数据库的sql语句名称，配置在dsl2ndSqlFile.xml中
+			DBConfigBuilder dbConfigBuilder = new DBConfigBuilder();
+			dbConfigBuilder
+					.setSqlFilepath("dsl2ndSqlFile.xml")
+
+					.setTargetDbName("test")//指定目标数据库，在application.properties文件中配置
+//				.setTargetDbDriver("com.mysql.jdbc.Driver") //数据库驱动程序，必须导入相关数据库的驱动jar包
+//				.setTargetDbUrl("jdbc:mysql://localhost:3306/bboss?useCursorFetch=true") //通过useCursorFetch=true启用mysql的游标fetch机制，否则会有严重的性能隐患，useCursorFetch必须和jdbcFetchSize参数配合使用，否则不会生效
+//				.setTargetDbUser("root")
+//				.setTargetDbPassword("123456")
+//				.setTargetValidateSQL("select 1")
+//				.setTargetUsePool(true)//是否使用连接池
+					.setInsertSqlName("insertSQLnew")//指定新增的sql语句名称，在配置文件中配置：sql-dbtran.xml
+//				.setUpdateSqlName("updateSql")//指定修改的sql语句名称，在配置文件中配置：sql-dbtran.xml
+//				.setDeleteSqlName("deleteSql")//指定删除的sql语句名称，在配置文件中配置：sql-dbtran.xml
+			/**
+			 * 是否在批处理时，将insert、update、delete记录分组排序
+			 * true：分组排序，先执行insert、在执行update、最后执行delete操作
+			 * false：按照原始顺序执行db操作，默认值false
+			 * @param optimize
+			 * @return
+			 */
+//				.setOptimize(true);//指定查询源库的sql语句，在配置文件中配置：sql-dbtran.xml
+			;
+			importBuilder.setOutputDBConfig(dbConfigBuilder.buildDBImportConfig());
 			/**
 			 * es相关配置
 			 */

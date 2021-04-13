@@ -20,7 +20,7 @@ import org.frameworkset.elasticsearch.ElasticSearchHelper;
 import org.frameworkset.tran.db.input.es.DB2ESImportBuilder;
 import org.frameworkset.tran.schedule.ExternalScheduler;
 import org.frameworkset.tran.schedule.ImportIncreamentConfig;
-import org.frameworkset.tran.schedule.xxjob.AbstractDB2ESXXJobHandler;
+import org.frameworkset.tran.schedule.xxjob.AbstractXXLJobHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author biaoping.yin
  * @version 1.0
  */
-public class XXJobImportTask extends AbstractDB2ESXXJobHandler {
+public class XXJobImportTask extends AbstractXXLJobHandler {
 	private static Logger logger = LoggerFactory.getLogger(XXJobImportTask.class);
 	public void init(){
 		// 可参考Sample示例执行器中的示例任务"ShardingJobHandler"了解试用

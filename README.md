@@ -8,6 +8,7 @@ JDK requirement: JDK 1.7+
 Elasticsearch version requirements: 1.x,2.X,5.X,6.X,+
 
 Spring booter 1.x,2.x,+
+xxl-job 2.3.0以下版本
 # bboss elasticsearch 数据导入工具xx job定时任务调度demo
 使用本demo所带的应用程序运行容器环境，可以快速编写、打包发布可运行在分布式定时任务引擎xx job的数据同步任务。
 

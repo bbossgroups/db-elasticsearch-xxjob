@@ -125,7 +125,7 @@ public class XXJobImportTask extends AbstractXXLJobHandler {
 //			}
 //
 //			@Override
-//			public void throwException(TaskContext taskContext, Exception e) {
+//			public void throwException(TaskContext taskContext, Throwable e) {
 //				System.out.println("throwException");
 //			}
 //		}).addCallInterceptor(new CallInterceptor() {
@@ -140,7 +140,7 @@ public class XXJobImportTask extends AbstractXXLJobHandler {
 //			}
 //
 //			@Override
-//			public void throwException(TaskContext taskContext, Exception e) {
+//			public void throwException(TaskContext taskContext, Throwable e) {
 //				System.out.println("throwException 1");
 //			}
 //		});

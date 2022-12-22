@@ -133,7 +133,7 @@ public class XXJobES2DBImportTask extends AbstractXXLJobHandler {
 				}
 
 				@Override
-				public void exception(TaskCommand taskCommand, Exception exception) {
+				public void exception(TaskCommand taskCommand, Throwable exception) {
 					System.out.println("exception");
 					TaskMetrics taskMetrics = taskCommand.getTaskMetrics();
 					logger.info(taskMetrics.toString());

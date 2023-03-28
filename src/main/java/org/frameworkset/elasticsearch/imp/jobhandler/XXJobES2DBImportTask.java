@@ -139,10 +139,7 @@ public class XXJobES2DBImportTask extends AbstractXXLJobHandler {
 					logger.info(taskMetrics.toString());
 				}
 
-				@Override
-				public int getMaxRetry() {
-					return -1;
-				}
+
 			});
 //		//设置任务执行拦截器结束，可以添加多个
 			//增量配置开始

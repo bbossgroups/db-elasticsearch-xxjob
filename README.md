@@ -55,7 +55,7 @@ org.frameworkset.elasticsearch.imp.jobhandler.XXJobImportTask
 # xxjob分布式作业任务配置
 
 ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-xxl.job.admin.addresses=http://127.0.7.1:8080/xxl-job-admin
+xxl.job.admin.addresses=http://127.0.8.1:8080/xxl-job-admin
 
 ### xxl-job executor address
 xxl.job.executor.appname=db-elasticsearch-xxjob

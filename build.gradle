@@ -138,7 +138,9 @@ configure(allprojects) { project ->
 			[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "${log4j2_version}", transitive: true],
 		)
 		api(
-				[group: 'com.bbossgroups.plugins', name: 'bboss-datatran-jdbc', version: "${bboss_es_version}", transitive: true],
+                [group: 'com.bbossgroups.plugins', name: 'bboss-datatran-fileftp', version: "${bboss_es_version}", transitive: true],
+
+                [group: 'com.bbossgroups.plugins', name: 'bboss-datatran-jdbc', version: "${bboss_es_version}", transitive: true],
 				[group: 'com.bbossgroups', name: 'bboss-schedule', version: "${bboss_version}", transitive: true],
 		)
 		api 'com.xuxueli:xxl-job-core:2.1.1'
@@ -151,6 +153,20 @@ configure(allprojects) { project ->
 		api (
 				fileTree(dir: 'lib', include: '*.jar')
 		)
+        api  (
+                [group: 'org.apache.groovy', name: 'groovy', version: "${groovy_version}", transitive: true],
+
+        ){
+//            exclude group: 'org.apache.groovy', module: 'groovy-testng'
+            exclude group: 'org.apache.groovy', module: 'groovy-test'
+            exclude group: 'org.apache.groovy', module: 'groovy-test-junit5'
+
+            exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
+
+            exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+            exclude group: 'com.github.javaparser', module: 'javaparser-core'
+
+        }
 	}
 
 
